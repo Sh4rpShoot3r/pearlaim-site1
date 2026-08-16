@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <defs>
+    <radialGradient id="pearlGrad" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#c9fbf1"/>
+      <stop offset="45%" stop-color="#5eead4"/>
+      <stop offset="100%" stop-color="#3a2e63"/>
+    </radialGradient>
+  </defs>
+  <circle cx="20" cy="20" r="18" fill="url(#pearlGrad)"/>
+  <circle cx="14" cy="13" r="4" fill="#ffffff" opacity="0.55"/>
+  <path d="M20 3 L20 37 M3 20 L37 20" stroke="#0a0814" stroke-width="0.6" opacity="0.15"/>
+</svg>

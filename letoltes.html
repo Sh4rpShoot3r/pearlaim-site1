@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Letöltés – PearlAim</title>
+<meta name="description" content="PearlAim letöltése Minecraft 1.18.2, 1.19.4, 1.20.1, 1.20.4 és 1.21.1 verziókhoz. Licenc szükséges.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* nav fix - túl sok link */
+.nav-links { gap: 16px; }
+.nav-links a { font-size: 0.87rem; }
+
+/* HWID check box */
+.check-box {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, var(--surface-2), var(--void-soft));
+  padding: 28px 28px 24px;
+  margin-bottom: 28px;
+}
+.check-box h2 { font-size: 1.15rem; margin-bottom: 6px; }
+.check-box p  { font-size: 0.9rem; color: var(--muted); margin-bottom: 18px; }
+
+.hwid-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.hwid-input {
+  flex: 1; min-width: 220px;
+  font-family: var(--font-mono); font-size: 0.82rem;
+  background: var(--void-soft); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 11px 14px;
+  color: var(--text); outline: none;
+  transition: border-color .15s ease;
+}
+.hwid-input:focus { border-color: var(--pearl-teal); }
+.hwid-input::placeholder { color: var(--muted-2); }
+
+.check-msg {
+  font-family: var(--font-mono); font-size: 0.82rem;
+  margin-top: 12px; padding: 10px 14px;
+  border-radius: var(--radius-sm); display: none; line-height: 1.55;
+}
+.check-msg.ok      { background: rgba(94,234,212,.1);  color: var(--pearl-teal);   display:block; border: 1px solid rgba(94,234,212,.3); }
+.check-msg.err     { background: rgba(155,123,234,.1); color: var(--pearl-violet); display:block; border: 1px solid rgba(155,123,234,.3); }
+.check-msg.loading { background: rgba(255,255,255,.04); color: var(--muted);       display:block; border: 1px solid var(--line); }
+
+/* success banner */
+.unlock-banner {
+  display: none;
+  border: 1px solid rgba(94,234,212,.4);
+  background: rgba(94,234,212,.07);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  margin-bottom: 22px;
+  font-size: 0.88rem;
+  color: var(--pearl-teal);
+  font-family: var(--font-mono);
+}
+.unlock-banner.visible { display: block; }
+
+/* version cards */
+.ver-grid { display: grid; gap: 16px; margin: 0 0 28px; }
+
+.ver-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface), var(--void-soft));
+  overflow: hidden;
+  transition: border-color .25s ease, opacity .25s ease;
+}
+.ver-card.latest  { border-color: rgba(94,234,212,.35); }
+.ver-card.locked  { opacity: .55; }
+.ver-card.unlocked{ border-color: rgba(94,234,212,.55); opacity: 1 !important; }
+
+.ver-card-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 26px;
+  flex-wrap: wrap;
+}
+.ver-info { flex: 1; min-width: 200px; }
+
+.ver-title {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 1.05rem;
+  font-weight: 600; color: var(--text);
+  margin-bottom: 12px;
+}
+.ver-tag {
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); letter-spacing: .04em;
+}
+.tag-latest { background: var(--pearl-teal-dim);  color: var(--pearl-teal); }
+.tag-old    { background: var(--pearl-violet-dim); color: var(--pearl-violet); }
+
+.ver-features { list-style: none; padding: 0; margin: 0; }
+.ver-features li {
+  font-size: 0.9rem; color: var(--muted);
+  padding-left: 18px; position: relative; margin-bottom: 6px;
+}
+.ver-features li::before {
+  content: "›"; position: absolute; left: 0;
+  color: var(--pearl-teal); font-family: var(--font-mono);
+}
+
+/* right side of card */
+.ver-side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.ver-lock-label {
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--pearl-violet); display: flex; align-items: center; gap: 6px;
+}
+.ver-lock-label svg { width: 13px; height: 13px; }
+
+.ver-dl-meta {
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--muted-2); text-align: right;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.svg" alt="" width="28" height="28">
+      PearlAim
+    </a>
+    <button class="nav-toggle" aria-label="Menü megnyitása" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html#mi-ez">Rólunk</a></li>
+      <li><a href="index.html#funkciok">Funkciók</a></li>
+      <li><a href="index.html#hogyan">Hogyan működik</a></li>
+      <li><a href="licenc.html">Licenc</a></li>
+      <li><a href="letoltes.html">Letöltés</a></li>
+      <li><a href="index.html#gyik">GYIK</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="contact.html">Kapcsolat</a>
+      <a class="btn btn-primary" href="licenc.html">Licenc igénylése</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="legal" style="max-width:860px;">
+    <span class="eyebrow">Letöltés</span>
+    <h1>Minden verzió, egy helyen</h1>
+    <p class="updated">Add meg egyszer a HWID-edet — ha jóváhagyva van, az összes verzió egyszerre feloldódik, amíg be nem zárod az oldalt. Ha még nincs licenced, <a href="licenc.html" style="color:var(--pearl-teal);">előbb igényelj egyet</a>.</p>
+
+    <div class="check-box" id="check-box">
+      <h2>Licenc ellenőrzése</h2>
+      <p>Illeszd be a <code style="font-family:var(--font-mono); background:var(--void-soft); border:1px solid var(--line); padding:1px 7px; border-radius:5px; color:var(--pearl-teal);">get-hwid.bat</code> által generált 64 karakteres kódodat, és nyomj Ellenőrzés-t.</p>
+      <div class="hwid-row">
+        <input class="hwid-input" id="hwid-input" type="text"
+               placeholder="Illeszd be a HWID-edet (64 hex karakter)..."
+               maxlength="64" spellcheck="false" autocomplete="off">
+        <button class="btn btn-primary" id="check-btn" onclick="checkHwid()">Ellenőrzés</button>
+      </div>
+      <div class="check-msg" id="check-msg"></div>
+    </div>
+
+    <div class="unlock-banner" id="unlock-banner">
+      ✓ Licenc jóváhagyva — az összes verzió elérhető. Az oldal bezárásáig aktív marad.
+    </div>
+
+    <div class="ver-grid">
+
+      <!-- 1.21.1 -->
+      <div class="ver-card latest locked" id="card-1211">
+        <div class="ver-card-inner">
+          <div class="ver-info">
+            <div class="ver-title">
+              PearlAim 1.21.1
+              <span class="ver-tag tag-latest">Legújabb</span>
+            </div>
+            <ul class="ver-features">
+              <li>Automata pearl dobás a legközelebbi játékosra</li>
+              <li>Pearl-interception predikció</li>
+              <li>Kalibráció (throw / calibrate / calibrate_reset)</li>
+              <li>Java 21+ · Fabric Loader ≥ 0.15.0 · Fabric API</li>
+            </ul>
+          </div>
+          <div class="ver-side" id="side-1211">
+            <div class="ver-lock-label" id="lock-1211">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Licenc szükséges
+            </div>
+            <a class="btn btn-primary" id="dlbtn-1211" href="#" style="display:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Letöltés
+            </a>
+            <span class="ver-dl-meta" id="meta-1211" style="display:none;">Minecraft 1.21.1 · Java 21</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.20.4 -->
+      <div class="ver-card locked" id="card-1204">
+        <div class="ver-card-inner">
+          <div class="ver-info">
+            <div class="ver-title">PearlAim 1.20.4</div>
+            <ul class="ver-features">
+              <li>Automata pearl dobás a legközelebbi játékosra</li>
+              <li>Pearl-interception predikció</li>
+              <li>Kalibráció (throw / calibrate / calibrate_reset)</li>
+              <li>Java 17+ · Fabric Loader ≥ 0.15.0 · Fabric API</li>
+            </ul>
+          </div>
+          <div class="ver-side" id="side-1204">
+            <div class="ver-lock-label" id="lock-1204">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Licenc szükséges
+            </div>
+            <a class="btn btn-primary" id="dlbtn-1204" href="#" style="display:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Letöltés
+            </a>
+            <span class="ver-dl-meta" id="meta-1204" style="display:none;">Minecraft 1.20.4 · Java 17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.20.1 -->
+      <div class="ver-card locked" id="card-1201">
+        <div class="ver-card-inner">
+          <div class="ver-info">
+            <div class="ver-title">PearlAim 1.20.1</div>
+            <ul class="ver-features">
+              <li>Automata pearl dobás a legközelebbi játékosra</li>
+              <li>Pearl-interception predikció</li>
+              <li>Kalibráció (throw / calibrate / calibrate_reset)</li>
+              <li>Java 17+ · Fabric Loader ≥ 0.15.0 · Fabric API</li>
+            </ul>
+          </div>
+          <div class="ver-side" id="side-1201">
+            <div class="ver-lock-label" id="lock-1201">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Licenc szükséges
+            </div>
+            <a class="btn btn-primary" id="dlbtn-1201" href="#" style="display:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Letöltés
+            </a>
+            <span class="ver-dl-meta" id="meta-1201" style="display:none;">Minecraft 1.20.1 · Java 17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.19.4 -->
+      <div class="ver-card locked" id="card-1194">
+        <div class="ver-card-inner">
+          <div class="ver-info">
+            <div class="ver-title">PearlAim 1.19.4</div>
+            <ul class="ver-features">
+              <li>Automata pearl dobás a legközelebbi játékosra</li>
+              <li>Pearl-interception predikció</li>
+              <li>Kalibráció (throw / calibrate / calibrate_reset)</li>
+              <li>Java 17+ · Fabric Loader ≥ 0.15.0 · Fabric API</li>
+            </ul>
+          </div>
+          <div class="ver-side" id="side-1194">
+            <div class="ver-lock-label" id="lock-1194">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Licenc szükséges
+            </div>
+            <a class="btn btn-primary" id="dlbtn-1194" href="#" style="display:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Letöltés
+            </a>
+            <span class="ver-dl-meta" id="meta-1194" style="display:none;">Minecraft 1.19.4 · Java 17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.18.2 -->
+      <div class="ver-card locked" id="card-1182">
+        <div class="ver-card-inner">
+          <div class="ver-info">
+            <div class="ver-title">
+              PearlAim 1.18.2
+              <span class="ver-tag tag-old">Legrégebbi</span>
+            </div>
+            <ul class="ver-features">
+              <li>Automata pearl dobás a legközelebbi játékosra</li>
+              <li>Pearl-interception predikció</li>
+              <li>Kalibráció (throw / calibrate / calibrate_reset)</li>
+              <li>Java 17+ · Fabric Loader ≥ 0.15.0 · Fabric API</li>
+            </ul>
+          </div>
+          <div class="ver-side" id="side-1182">
+            <div class="ver-lock-label" id="lock-1182">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Licenc szükséges
+            </div>
+            <a class="btn btn-primary" id="dlbtn-1182" href="#" style="display:none;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Letöltés
+            </a>
+            <span class="ver-dl-meta" id="meta-1182" style="display:none;">Minecraft 1.18.2 · Java 17</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="font-size:0.85rem; color:var(--muted-2);">
+      Nincs még licenced? <a href="licenc.html" style="color:var(--pearl-teal);">Igényelj egyet</a> — HWID lekérés, Discord üzenet, jóváhagyás után azonnal működik. Keress Discordon: <strong>@bence_szasz</strong>.
+    </p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:14px; display:inline-flex;">
+          <img src="assets/logo.svg" alt="" width="26" height="26">
+          PearlAim
+        </a>
+        <p style="max-width:320px; font-size:0.92rem;">Automata pearl-interceptor Fabric mod. Kliens oldali, hardverhez kötött licenccel, kalibrálható predikcióval.</p>
+      </div>
+      <div>
+        <h4>Oldal</h4>
+        <ul>
+          <li><a href="index.html#funkciok">Funkciók</a></li>
+          <li><a href="licenc.html">Licenc</a></li>
+          <li><a href="letoltes.html">Letöltés</a></li>
+          <li><a href="about.html">Rólunk</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Jogi</h4>
+        <ul>
+          <li><a href="disclaimer.html">Jognyilatkozat</a></li>
+          <li><a href="terms.html">Felhasználási feltételek</a></li>
+          <li><a href="privacy.html">Adatvédelem</a></li>
+          <li><a href="contact.html">Kapcsolat</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PearlAim. Minden jog fenntartva.</span>
+      <span>Nem áll kapcsolatban a Mojang Studios-szal vagy a Microsofttal.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// == KONFIGURÁCIÓ ==
+const WORKER_URL = "https://morning-sunset-36a5.arcana-s.workers.dev";
+
+const DOWNLOAD_URLS = {
+  "1211": "https://github.com/Sh4rpShoot3r/pearlaim-site1/releases/download/v1.0.0/pearlaim-1.21.1.jar",
+  "1204": "https://github.com/Sh4rpShoot3r/pearlaim-site1/releases/download/v1.0.0/pearlaim-1.20.4.jar",
+  "1201": "https://github.com/Sh4rpShoot3r/pearlaim-site1/releases/download/v1.0.0/pearlaim-1.20.1.jar",
+  "1194": "https://github.com/Sh4rpShoot3r/pearlaim-site1/releases/download/v1.0.0/pearlaim-1.19.4.jar",
+  "1182": "https://github.com/Sh4rpShoot3r/pearlaim-site1/releases/download/v1.0.0/pearlaim-1.18.2.jar",
+};
+// ==================
+
+const VERSIONS = ["1211", "1204", "1201", "1194", "1182"];
+
+window.addEventListener("DOMContentLoaded", () => {
+  if (sessionStorage.getItem("pearlaim_unlocked") === "1") {
+    unlockAll();
+  }
+});
+
+async function checkHwid() {
+  const input = document.getElementById("hwid-input");
+  const msg   = document.getElementById("check-msg");
+  const btn   = document.getElementById("check-btn");
+  const hwid  = input.value.trim().toLowerCase();
+
+  if (hwid.length !== 64 || !/^[0-9a-f]+$/.test(hwid)) {
+    msg.className = "check-msg err";
+    msg.textContent = "Érvénytelen formátum — a HWID pontosan 64 hexadecimális karakter. Futtasd le újra a get-hwid.bat-ot.";
+    return;
+  }
+
+  btn.disabled = true;
+  msg.className = "check-msg loading";
+  msg.textContent = "Ellenőrzés...";
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hwid }),
+    });
+    if (!res.ok) throw new Error("server_error");
+    const data = await res.json();
+
+    if (data.allowed) {
+      sessionStorage.setItem("pearlaim_unlocked", "1");
+      msg.className = "check-msg ok";
+      msg.textContent = "✓ Licenc jóváhagyva!";
+      unlockAll();
+    } else {
+      msg.className = "check-msg err";
+      msg.innerHTML = `Ez a HWID nem szerepel a jóváhagyott listán.<br>
+        Ha már kaptál jóváhagyást, ellenőrizd, hogy pontosan a <code style="font-family:var(--font-mono)">get-hwid.bat</code> kódját másoltad-e be.<br>
+        Ha még nem igényeltél licencet: <a href="licenc.html" style="color:var(--pearl-teal)">Licenc igénylése →</a>`;
+      btn.disabled = false;
+    }
+  } catch {
+    msg.className = "check-msg err";
+    msg.innerHTML = "Nem sikerült elérni az ellenőrző szervert. Próbáld újra, vagy keress Discordon: <strong>@bence_szasz</strong>.";
+    btn.disabled = false;
+  }
+}
+
+function unlockAll() {
+  // Check box elrejtése, banner mutatása
+  const checkBox = document.getElementById("check-box");
+  if (checkBox) checkBox.style.display = "none";
+  const banner = document.getElementById("unlock-banner");
+  if (banner) banner.style.display = "block";
+
+  VERSIONS.forEach(ver => {
+    const card = document.getElementById("card-" + ver);
+    const lock = document.getElementById("lock-" + ver);
+    const btn  = document.getElementById("dlbtn-" + ver);
+    const meta = document.getElementById("meta-" + ver);
+
+    if (!card) return;
+
+    // Kártya feloldása
+    card.classList.remove("locked");
+    card.classList.add("unlocked");
+    card.style.opacity = "1";
+
+    // Lock label elrejtése
+    if (lock) lock.style.display = "none";
+
+    // Letöltés gomb megjelenítése — inline style, nem class
+    if (btn) {
+      btn.href = DOWNLOAD_URLS[ver];
+      btn.style.display = "inline-flex";
+      btn.style.alignItems = "center";
+      btn.style.gap = "8px";
+    }
+
+    // Meta sor megjelenítése
+    if (meta) meta.style.display = "block";
+  });
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && document.activeElement?.id === "hwid-input") checkHwid();
+});
+</script>
+</body>
+</html>

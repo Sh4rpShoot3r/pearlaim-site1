@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PearlAim – Automata pearl-interceptor Fabric mod (licencköteles)</title>
+<meta name="description" content="A PearlAim automatikusan a legközelebbi játékosra dobja az ender gyöngyöt, és kiszámolja az ellenfél repülő pearljének landolását. Fabric 1.20.4, hardverhez kötött licenccel.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.svg" alt="" width="28" height="28">
+      PearlAim
+    </a>
+    <button class="nav-toggle" aria-label="Menü megnyitása" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+        <ul class="nav-links">
+      <li><a href="index.html#mi-ez">Rólunk</a></li>
+      <li><a href="index.html#funkciok">Funkciók</a></li>
+      <li><a href="index.html#hogyan">Hogyan működik</a></li>
+      <li><a href="licenc.html">Licenc</a></li>
+      <li><a href="letoltes.html">Letöltés</a></li>
+      <li><a href="index.html#gyik">GYIK</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="contact.html">Kapcsolat</a>
+      <a class="btn btn-primary" href="licenc.html">Licenc igénylése</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Fabric mod · MC 1.18.2–1.21.1 · Licenc szükséges</span>
+        <h1>Agro-Pearl egy gombbal.</h1>
+        <p style="font-size:1.08rem; max-width:520px;">Nyomod a gombot, a PearlAim megkeresi a hozzád legközelebbi játékost, és eldobja rá a pearlt. Ha az ellenfeled közben pearlezik, kiszámolja hova landol, és odadob eléd — interception, amit kézzel szinte lehetetlen kivitelezni.</p>
+        <div class="hero-badges">
+          <span class="badge"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>Hardverhez kötött licenc</span>
+          <span class="badge"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>Csak kliens oldali</span>
+          <span class="badge"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>Fabric 1.20.4</span>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="licenc.html">Licencet igénylek</a>
+          <a class="btn btn-ghost" href="#hogyan">Hogyan működik</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 440 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="targetGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#9b7bea" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#9b7bea" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="pearlBody" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#e9fffb"/>
+              <stop offset="55%" stop-color="#5eead4"/>
+              <stop offset="100%" stop-color="#1c8f7c"/>
+            </radialGradient>
+          </defs>
+
+          <g opacity="0.9">
+            <rect x="10" y="318" width="60" height="20" rx="2" fill="#221c40" stroke="#3a3160"/>
+            <rect x="10" y="298" width="60" height="20" rx="2" fill="#191532" stroke="#3a3160"/>
+          </g>
+          <g opacity="0.95">
+            <rect x="360" y="200" width="64" height="24" rx="2" fill="#221c40" stroke="#3a3160"/>
+            <rect x="368" y="176" width="48" height="24" rx="2" fill="#191532" stroke="#3a3160"/>
+          </g>
+
+          <path class="trajectory-line" d="M 40 320 C 140 40, 300 40, 400 220" stroke="#9b7bea" stroke-width="2" fill="none" opacity="0.65"/>
+
+          <circle cx="400" cy="220" r="46" fill="url(#targetGlow)"/>
+          <g class="reticle">
+            <circle cx="400" cy="220" r="22" fill="none" stroke="#5eead4" stroke-width="2"/>
+            <path d="M400 190v14M400 236v14M370 220h14M416 220h14" stroke="#5eead4" stroke-width="2"/>
+          </g>
+
+          <circle class="pearl-dot" r="9" fill="url(#pearlBody)"/>
+
+          <rect x="30" y="300" width="16" height="18" rx="2" fill="#5eead4"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT IS -->
+  <section class="section" id="mi-ez">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">Mi ez pontosan</span>
+        <h2>Nem segítség — a mod dob helyetted</h2>
+        <p>A PearlAim egy kliens oldali Fabric mod, ami PvP közben magától megkeresi a hozzád legközelebbi játékost, és eldobja rá az ender gyöngyöt. Nem kell célozni, nem kell időzíteni — megnyomod a gombot, a mod lő.</p>
+        <p>Ha az ellenfeled közben pearlezik, a PearlAim kiszámolja, hova fog landolni a repülő gyöngye, és odadob, hogy pontosan elé érkezz. Ez a rész a lényeg: nem sima aim-asszisztens, hanem valódi interception.</p>
+        <div class="stat-strip">
+          <div><strong>1.21.1</strong><span>Legújabb MC verzió</span></div>
+          <div><strong>5</strong><span>Releases</span></div>
+          <div><strong>3</strong><span>Gyorsbillentyű</span></div>
+          <div><strong>1 gép</strong><span>Licenc / kötés</span></div>
+        </div>
+      </div>
+      <div class="card" style="padding:32px;">
+        <h3 style="margin-bottom:14px;">A mod egy mondatban</h3>
+        <p style="font-family:var(--font-mono); font-size:0.95rem; color:var(--pearl-teal); line-height:1.7;">"Nem célzol, nem időzítesz — csak nyomod a gombot, a többit a PearlAim intézi."</p>
+        <p style="margin-top:18px; font-size:0.9rem;">Gyorsbillentyűk: <code style="font-family:var(--font-mono); background:var(--void-soft); border:1px solid var(--line); padding:2px 8px; border-radius:5px; color:var(--pearl-violet);">throw</code> <code style="font-family:var(--font-mono); background:var(--void-soft); border:1px solid var(--line); padding:2px 8px; border-radius:5px; color:var(--pearl-violet);">calibrate</code> <code style="font-family:var(--font-mono); background:var(--void-soft); border:1px solid var(--line); padding:2px 8px; border-radius:5px; color:var(--pearl-violet);">calibrate_reset</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO SHOULD USE -->
+  <section class="section" id="kinek">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Kinek ajánljuk</span>
+        <h2>Aki a PvP-t komolyan tolja</h2>
+        <p>A PearlAim nem általános kényelmi mod — kifejezetten harci helyzetekre lett kihegyezve.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+          <h3>PvP-sek</h3>
+          <p>Menekülés vagy üldözés közben nem kell külön célozni — a PearlAim automatikusan ráugrik a legközelebbi ellenfélre.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 11-14h-7z"/></svg></div>
+          <h3>Duelezők, arénázók</h3>
+          <p>Versenyszerű 1v1-ben egy elhibázott interception döntő lehet — ezt a mod veszi le a válladról.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></div>
+          <h3>Szerver-staffek</h3>
+          <p>Ha meg akarod ismerni, hogyan viselkedik éles helyzetben, mielőtt szabályt hoznátok róla — érdemes kipróbálni.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="funkciok">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Funkciók</span>
+        <h2>Amit a mod ténylegesen csinál</h2>
+        <p>Nincs felesleges dísz — minden funkció direkt a harci pontosságot szolgálja.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3>Automata célkeresés</h3>
+          <p>A <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">throw</code> gomb megnyomásakor a mod mindig a hozzád legközelebbi játékosra dob.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-10 4 6 4-4 4 8"/></svg></div>
+          <h3>Pearl-interception</h3>
+          <p>Ha az ellenfélnek repülő gyöngye van, a mod kiszámolja a landolási pontot, és odadob, hogy elé érkezz.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg></div>
+          <h3>Kalibráció</h3>
+          <p>A <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">calibrate</code> gombbal pár teszt-dobással megtanítod a modnak a saját reakcióidat, hogy pontosabban számoljon.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h2M7 14h6"/></svg></div>
+          <h3>Kalibráció-reset</h3>
+          <p>Ha elrontottad a kalibrációt, a <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">calibrate_reset</code> gombbal egy pillanat alatt nullázhatod.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9h6v6H9z"/></svg></div>
+          <h3>Hardverhez kötött licenc</h3>
+          <p>A géped egyedi azonosítója (SHA-256 hash) alapján ellenőrzi a mod, hogy jogosult vagy-e a használatra.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 11-14h-7z"/></svg></div>
+          <h3>Automatikus ellenőrzés</h3>
+          <p>Minden indításkor leellenőrzi online, hogy a hardvered szerepel-e az engedélyezett listán — nincs kulcs-beírás.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="hogyan">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Hogyan működik</span>
+        <h2>Kalibrálsz egyszer, utána csak nyomod a gombot</h2>
+        <p>A predikció annál pontosabb, minél többet kalibráltál — ez a te dobási szokásaidra hangolja a modot.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num"></div>
+          <div>
+            <h3>Kalibráció (ajánlott, de nem kötelező)</h3>
+            <p>A <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">calibrate</code> gombbal pár teszt-dobást végzel — a mod ebből tanulja meg a reakcióidat és a késleltetésed.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div>
+            <h3>Cél keresése</h3>
+            <p>Megnyomod a <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">throw</code> gombot — a mod megkeresi a hozzád legközelebbi játékost.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div>
+            <h3>Dobás vagy interception</h3>
+            <p>Ha nincs az ellenfélnek repülő pearlje, egyszerűen rá dob. Ha van, kiszámolja a landolási pontot, és odadob, hogy elé érkezz.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div>
+            <h3>Finomhangolás menet közben</h3>
+            <p>Ha úgy érzed, elcsúszott a kalibráció, a <code style="font-family:var(--font-mono); font-size:0.85rem; color:var(--pearl-teal);">calibrate_reset</code> gombbal nullázhatod, és kezdheted újra.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="section" id="felhasznalas">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Gyakori felhasználási esetek</span>
+        <h2>Ahol a PearlAim a legtöbbet számít</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>PvP clutch</h3>
+          <p>Menekülés vagy üldözés közben nem kell külön célozni — a PearlAim megteszi helyetted, még nyomás alatt is.</p>
+        </div>
+        <div class="card">
+          <h3>Interception harc</h3>
+          <p>Ha az ellenfeled pearlezik, egy gombnyomással odaugorhatsz elé, mielőtt landolna.</p>
+        </div>
+        <div class="card">
+          <h3>Raidek, összecsapások</h3>
+          <p>Gyors reagálás, ha ellenség tűnik fel a közeledben — nincs idő manuálisan célozni.</p>
+        </div>
+        <div class="card">
+          <h3>Szerver-staff tesztelés</h3>
+          <p>Megismerheted, hogyan viselkedik a mod éles PvP helyzetben, mielőtt szabályzatot írnátok róla.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADVANTAGES -->
+  <section class="section" id="elonyok">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">Előnyök</span>
+        <h2>Miért érdemes a PearlAim-et választani</h2>
+      </div>
+      <div class="adv-list">
+        <div class="adv-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>
+          <div><h3>Nem kell reagálnod</h3><p>A mod magától észreveszi a helyzetet, és cselekszik — te csak nyomod a gombot.</p></div>
+        </div>
+        <div class="adv-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>
+          <div><h3>Interception, amit kézzel szinte lehetetlen</h3><p>A landolási pont kiszámítása és az odaugrás emberi reflexekkel alig kivitelezhető.</p></div>
+        </div>
+        <div class="adv-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>
+          <div><h3>Kalibrálható</h3><p>A saját dobási szokásaidra hangolható, nem egy általános, mindenkinek ugyanolyan modell.</p></div>
+        </div>
+        <div class="adv-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>
+          <div><h3>Hardverhez kötött</h3><p>A licenced nem szivárog ki egyszerűen — más gépen nem fog aktiválódni.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">PearlAim vs. alternatívák</span>
+        <h2>Miben más a PearlAim</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Funkció</th><th>PearlAim</th><th>Kézi pearl dobás</th><th>Más automata pearl modok</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Célzás</td><td class="hl">Automatikus (legközelebbi ellenfél)</td><td>Kézi, reflex alapú</td><td>Változó</td></tr>
+            <tr><td>Interception predikció</td><td class="hl">Igen, kalibrálható</td><td>Nincs</td><td>Ritkán</td></tr>
+            <tr><td>Kalibráció</td><td class="hl">Igen</td><td>–</td><td>Ritkán</td></tr>
+            <tr><td>Csak kliens oldali</td><td class="hl">Igen</td><td>Igen</td><td>Változó</td></tr>
+            <tr><td>Licenc / védelem</td><td class="hl">HWID-hez kötött</td><td>–</td><td>Változó</td></tr>
+            <tr><td>Ár</td><td class="hl">Fizetős</td><td>Ingyenes</td><td>Változó</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="section">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">Telepítés</span>
+        <h2>Így telepítsd a PearlAim-et</h2>
+        <p>A jar fájlt csak jóváhagyott licenc után kapod meg Discordon — a telepítés innentől ugyanaz, mint bármelyik Fabric modnál.</p>
+      </div>
+      <div class="install-steps">
+        <div class="install-step"><div><strong>Fabric Loader telepítése</strong><p style="margin:4px 0 0; font-size:0.9rem;">Töltsd le és telepítsd a Fabric Loadert a hivatalos <code>fabricmc.net</code> oldalról (1.20.4-hez).</p></div></div>
+        <div class="install-step"><div><strong>Fabric API letöltése</strong><p style="margin:4px 0 0; font-size:0.9rem;">A PearlAim a Fabric API-ra épül, ezt is telepítened kell.</p></div></div>
+        <div class="install-step"><div><strong>PearlAim jar a mods mappába</strong><p style="margin:4px 0 0; font-size:0.9rem;">A licenc jóváhagyása után Discordon megkapott <code>pearlaim.jar</code>-t másold a <code>.minecraft/mods</code> mappába.</p></div></div>
+        <div class="install-step"><div><strong>Indítás Fabric profillal</strong><p style="margin:4px 0 0; font-size:0.9rem;">Nyisd meg a Minecraft Launchert, válaszd a Fabric profilt, majd indítsd el a játékot.</p></div></div>
+        <div class="install-step"><div><strong>Licenc-ellenőrzés</strong><p style="margin:4px 0 0; font-size:0.9rem;">Belépéskor a mod automatikusan ellenőrzi a hardvered az engedélyezési listán — ehhez internetkapcsolat kell.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LICENSE TEASER -->
+  <section class="section" id="licenc">
+    <div class="container">
+      <div class="download-card">
+        <div>
+          <span class="eyebrow" style="margin-bottom:10px;">Licenc</span>
+          <h2 style="margin-bottom:8px;">Ez nem egy random ingyenes mod.</h2>
+          <p style="margin:0;">A PearlAim-hez licenc kell, ami a géped hardver-azonosítójához van kötve. A folyamat három lépés, meg egy Discord üzenet — nincs kulcs-beírás, nincs fiók.</p>
+          <div class="download-meta">
+            <span>1. HWID lekérése</span>
+            <span>2. Elküldés Discordon</span>
+            <span>3. Jóváhagyás után aktív</span>
+          </div>
+          <p class="download-note">Egy licenc = egy gép. Ha új gépre költözöl, írj Discordon, és átvezetjük.</p>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="licenc.html">Teljes útmutató</a>
+          <a class="btn btn-ghost" href="letoltes.html">Letöltések</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="gyik">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">GYIK</span>
+        <h2>Gyakran ismételt kérdések</h2>
+      </div>
+
+      <div class="faq-group">
+        <h3>Alapok</h3>
+        <details class="faq-item">
+          <summary>Mit csinál pontosan a PearlAim?</summary>
+          <div class="faq-a">Automatikusan a hozzád legközelebbi játékosra dobja az ender gyöngyöt. Ha az ellenfélnek repülő pearlje van, kiszámolja a landolást, és odadob, hogy elé érkezz.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Ingyenes a PearlAim?</summary>
+          <div class="faq-a">Nem. Fizetős, hardverhez kötött licenc szükséges hozzá. Az árról és a részletekről Discordon egyeztetünk: @bence_szasz.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Nyílt forráskódú?</summary>
+          <div class="faq-a">Nem, a mod forráskódja zárt.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Milyen Minecraft verzióval kompatibilis?</summary>
+          <div class="faq-a">A PearlAim elérhető Fabric 1.18.2, 1.19.4, 1.20.1, 1.20.4 és 1.21.1 verziókhoz. A letöltések a <a href="letoltes.html" style="color:var(--pearl-teal);">Letöltés</a> oldalon érhetők el.</div>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <h3>Licenc és HWID</h3>
+        <details class="faq-item">
+          <summary>Hogyan kapok licencet?</summary>
+          <div class="faq-a">Letöltöd a <code style="font-family:var(--font-mono);">get-hwid.bat</code> szkriptet, lefuttatod, majd az így kapott kódot elküldöd Discordon: @bence_szasz. Jóváhagyás után a hardvered felkerül az engedélyezett listára.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi történik, ha megosztom a jar-t vagy a HWID-em mással?</summary>
+          <div class="faq-a">A licenc egy géphez van kötve. Más gépen a mod nem fog aktiválódni, mivel minden indításkor leellenőrzi a hardver-azonosítót az engedélyezett listával szemben.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Kell internetkapcsolat a moddhoz?</summary>
+          <div class="faq-a">Igen, mert a mod indításkor online ellenőrzi, hogy a hardvered szerepel-e az engedélyezett listán.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Új gépet vettem, mi legyen?</summary>
+          <div class="faq-a">Írj Discordon, és átvezetjük a licencedet az új hardver-azonosítóra.</div>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <h3>Használat, kalibráció, biztonság</h3>
+        <details class="faq-item">
+          <summary>Mi az a kalibráció?</summary>
+          <div class="faq-a">A <code style="font-family:var(--font-mono);">calibrate</code> gombbal pár teszt-dobással megtanítod a modnak a saját reakcióidat és késleltetésed, hogy pontosabban számolja ki az interception pontot.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Mennyire pontos?</summary>
+          <div class="faq-a">A pontosság a kalibrációtól függ — minél többet kalibrálsz, annál kisebb a predikciós hiba.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Bannolhatnak érte egy szerveren?</summary>
+          <div class="faq-a">Igen, méghozzá nagy eséllyel. Mivel a mod automatikusan dob helyetted PvP közben, a legtöbb versenyszerű vagy anti-cheattal védett szerveren egyértelműen tiltott kategóriába esik. Csak olyan helyen használd, ahol ez megengedett, vagy saját/baráti szerveren.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Survival módban is működik?</summary>
+          <div class="faq-a">Igen, bárhol működik, ahol ender gyöngyöt lehet dobni és van másik játékos a közelben.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="margin-bottom:14px; display:inline-flex;">
+          <img src="assets/logo.svg" alt="" width="26" height="26">
+          PearlAim
+        </a>
+        <p style="max-width:320px; font-size:0.92rem;">Automata pearl-interceptor Fabric mod. Kliens oldali, hardverhez kötött licenccel, kalibrálható predikcióval.</p>
+      </div>
+      <div>
+        <h4>Oldal</h4>
+        <ul>
+          <li><a href="index.html#funkciok">Funkciók</a></li>
+          <li><a href="licenc.html">Licenc</a></li>
+          <li><a href="letoltes.html">Letöltés</a></li>
+          <li><a href="index.html#gyik">GYIK</a></li>
+          <li><a href="about.html">Rólunk</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Jogi</h4>
+        <ul>
+          <li><a href="disclaimer.html">Jognyilatkozat</a></li>
+          <li><a href="terms.html">Felhasználási feltételek</a></li>
+          <li><a href="privacy.html">Adatvédelem</a></li>
+          <li><a href="contact.html">Kapcsolat</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PearlAim. Minden jog fenntartva.</span>
+      <span>Nem áll kapcsolatban a Mojang Studios-szal vagy a Microsofttal.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
